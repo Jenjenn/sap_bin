@@ -1,0 +1,31 @@
+$duration=60
+$outdir=pwd
+$job={
+	param($d,$p,$dur)
+	function of{$args|out-file  $d'\'$p'_stack' -append}
+	$start=get-date
+	while(((get-date)-$start).totalseconds -lt $dur){
+		of (sapstack $p)
+		of (get-date -format HH:mm:ss.fff)
+		}
+	}
+$pids=((sapcontrol -prot PIPE -nr 00 -function ABAPGetWPTable) -match 'UPD') | % {($_ -split ', ')[2]}
+foreach($p in $pids){sajb -scriptblock $job -argumentlist $outdir, $p, $duration}
+while(get-job | where state -eq running){sleep 10;}
+
+
+
+# squished version; ideally we could fit all of this in under 255 characters to run in RSBDCOS0, but doesn't seem possible
+#
+# $d=60;$j={param($d,$p,$l);function of{$args|out-file $d'\'$p'_stack' -append};$s=get-date;while(((get-date)-$s).totalseconds-lt$l){of (get-date -format HH:mm:ss.fff);of (sapstack $p)}}
+# $di=pwd;$pi=((sapcontrol -prot PIPE -nr 00 -function ABAPGetWPTable) -match 'UPD') | % {($_ -split ', ')[2]};foreach($p in $pi){sajb -scriptblock $j -argumentlist $di, $p, $d};
+# while(get-job|where state -eq running){sleep 10;}
+
+
+
+# To run via RSBDCOS0, we have to write the script to a file first:
+# the following lines writes to a script file called "st_gen.ps1"
+#
+# powershell "&{$l=\"`$d=60;`$j={param(`$d,`$p,`$l);function of{`$args^|out-file `$d'\'`$p'_stack' -append};`$s=get-date;while(((get-date)-`$s).totalseconds-lt`$l){of (get-date -format HH:mm:ss.fff);of (sapstack `$p)}}\";$l|out-file st_gen.ps1}"
+# powershell "&{$l=\"`$di=pwd;`$pi=((sapcontrol -prot PIPE -nr 00 -function ABAPGetWPTable) -match 'UPD') ^| % {(`$_ -split ', ')[2]};foreach(`$p in `$pi){sajb -scriptblock `$j -argumentlist `$di, `$p, `$d};\";$l | out-file st_gen.ps1 -append}"
+# powershell "&{$l=\"while(get-job^|where state -eq running){sleep 10;}\";$l | out-file st_gen.ps1 -append}"
