@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Author: Jennifer Gray
+# Author: I844387
 #
 # usage: combine_niping <niping_file_1> <niping_file_2> ...
 #
@@ -13,6 +13,17 @@
 # Will combine all niping files in your current directory into a pivot-table friendly output file
 # Then copy and paste the results into excel for easy charting
 #
+
+if ! [ -x "$(command -v dos2unix)" ]; then
+  echo 'Error: this script requires dos2unix and gawk to be installed.' >&2
+  exit 1
+fi
+
+if ! [ -x "$(command -v gawk)" ]; then
+  echo 'Error: this script requires dos2unix and gawk to be installed.' >&2
+  exit 1
+fi
+
 
 echo "connection|timestamp|rtt(ms)|"
 
