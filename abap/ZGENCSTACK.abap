@@ -1,12 +1,12 @@
 *&---------------------------------------------------------------------*
-*& Report  Z_STACK_PROFILE
+*& Report  ZGENCSTACK
 *&
 *& Author : I844387
 *&---------------------------------------------------------------------*
 *&
 *&
 *&---------------------------------------------------------------------*
-REPORT z_stack_profile.
+REPORT zgencstack.
 
 DATA: lo_worker_info TYPE REF TO cl_worker_info.
 DATA: lv_wp_index TYPE int4.

@@ -29,9 +29,21 @@ Get-ChildItem -Filter $filter | % {
 	
 	$spools -Match $pattern | % {
 		
-		$_ -Match "(\d\d)\.(\d\d)\.(\d\d\d\d)\|(\d\d):(\d\d)"  > $null
+		if ($_ -Match "(\d\d)\.(\d\d)\.(\d\d\d\d)\|(\d\d):(\d\d)")
+		{
+			$datetime = "$($matches[3])/$($matches[2])/$($matches[1]) $($matches[4]):$($matches[5])"
+		}
+		elseif ($_ -Match "(\d\d)/(\d\d)/(\d\d\d\d)\|(\d\d):(\d\d)")
+		{
+			$datetime = "$($matches[3])/$($matches[1])/$($matches[2]) $($matches[4]):$($matches[5])"
+		}
+		else
+		{
+			Write-Output "datetime format unrecognized"
+			continue
+		}
 		
-		$datetime = "$($matches[3])/$($matches[2])/$($matches[1]) $($matches[4]):$($matches[5])"
+		
 	}
 	
 	$content = Get-Content $i.Name
